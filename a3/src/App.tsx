@@ -2,6 +2,9 @@ import React, {useState, ChangeEvent, FormEvent} from 'react';
 import './App.css';
 import Filtered from './Filtered';
 import Other from './Other';
+
+const currentFriendsList = [''];
+
 function App() {
   const [searchQ, setSearchQ] = useState('');
   const handleSearchQ = (event: ChangeEvent<HTMLInputElement>) =>
@@ -9,11 +12,25 @@ function App() {
     const searchQuery = event.currentTarget.value;
     setSearchQ(searchQuery);
   }
-  const [friendList, setFriendList] = useState<string[]>([]);
+  const [name, setName] = useState('');
+  const [friendList, setFriendList] = useState(currentFriendsList);
+  if (friendList[0] === '')
+    {
+      friendList.shift();
+    }
+  const changeName = (event: ChangeEvent<HTMLInputElement>) => {
+    const name = event.currentTarget.value;
+    setName(name);
+}
   const AddFriend = (event: any) => {
+    const newFriend = friendList.concat(name);
+    if (newFriend[0] === '')
+    {
+      newFriend.shift();
+    }
+    setFriendList(newFriend);
     event.preventDefault();
-    setFriendList(friendList.concat(event.target.value));
-    event.currentTarget.reset();
+    setName('');
   }
   return (
     <div className="App">
@@ -21,9 +38,9 @@ function App() {
       <input type="text" value={searchQ} onChange={handleSearchQ}/>
       <br/>
       <p>Add Friend to List</p>
-      <form onSubmit={AddFriend}>
-        <input type="text" />
-        <button type="submit">Add Friend</button>
+      <form >
+        <input type="text" value={name} onChange={changeName}/>
+        <button type="submit" onClick={AddFriend}>Add Friend</button>
       </form>
       <div>
         <Filtered query={searchQ} friends={friendList}/>
